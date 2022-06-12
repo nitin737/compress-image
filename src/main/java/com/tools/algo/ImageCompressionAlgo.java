@@ -1,6 +1,6 @@
 package com.tools.algo;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tools.exception.ICException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,47 +17,57 @@ import java.io.OutputStream;
 
 @Component
 public class ImageCompressionAlgo {
-  public String compressAlgoV1(MultipartFile imageFile, int compressionQuality) throws IOException {
+  public String compressAlgoV1(MultipartFile imageFile, float compressionQuality)
+      throws IOException, ICException {
     OutputStream os = null;
     ImageOutputStream ios = null;
     ImageWriter writer = null;
-    String newFileName = extractFileName(imageFile.getOriginalFilename());
-    String compressedImagePath =
-        "/tmp/" + newFileName + findFileExtension(imageFile.getOriginalFilename());
+    String compressedImageName =
+        extractFileName(imageFile.getOriginalFilename())
+            + "-compressed."
+            + extractFileExtenstion(imageFile.getOriginalFilename());
     try {
-      BufferedImage image = ImageIO.read(imageFile.getInputStream());
-      File compressedImageFile = new File(compressedImagePath);
-      os = new FileOutputStream(compressedImageFile);
+      BufferedImage oldImage = ImageIO.read(imageFile.getInputStream());
+      File compressedImage = new File(compressedImageName);
+      os = new FileOutputStream(compressedImage);
 
       writer =
-          ImageIO.getImageWritersByFormatName(findFileExtension(imageFile.getOriginalFilename()))
+          ImageIO.getImageWritersByFormatName(
+                  extractFileExtenstion(imageFile.getOriginalFilename()))
               .next();
 
       ios = ImageIO.createImageOutputStream(os);
       writer.setOutput(ios);
 
-      ImageWriteParam param = writer.getDefaultWriteParam();
-      if (param.canWriteCompressed()) {
-        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        param.setCompressionQuality(compressionQuality); // Change the quality value you prefer
-      }
-      writer.write(null, new IIOImage(image, null, null), param);
+      compressAndWriteToDisk(compressionQuality, writer, oldImage);
     } catch (IOException e) {
       e.printStackTrace();
+      throw new IOException("Image Compression failed");
     } finally {
       os.close();
       ios.close();
       writer.dispose();
     }
 
-    return newFileName;
+    return compressedImageName;
+  }
+
+  private void compressAndWriteToDisk(
+      float compressionQuality, ImageWriter writer, BufferedImage oldImage) throws IOException {
+    ImageWriteParam param = writer.getDefaultWriteParam();
+    if (param.canWriteCompressed()) {
+      param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+      // Change the quality value you prefer
+      param.setCompressionQuality(compressionQuality);
+    }
+    writer.write(null, new IIOImage(oldImage, null, null), param);
   }
 
   private String generateCommpressedFileName(String filePrefix, String filePostfix) {
     return filePrefix + "-compressed" + filePostfix;
   }
 
-  private String findFileExtension(String originalFilename) {
+  private String extractFileExtenstion(String originalFilename) {
     return originalFilename.substring(originalFilename.indexOf(".") + 1);
   }
 

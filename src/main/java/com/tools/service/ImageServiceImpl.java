@@ -12,9 +12,8 @@ import java.io.IOException;
 public class ImageServiceImpl implements ImageService {
   private ImageCompressionAlgo imageCompressionAlgo;
 
-  public String compressImage(MultipartFile multipartFile, int compressionQuality)
+  public String compressImage(MultipartFile multipartFile, float compressionQuality)
       throws IOException {
-    String newFileName = imageCompressionAlgo.compressAlgoV1(multipartFile, compressionQuality);
-    return newFileName;
+    return imageCompressionAlgo.compressAlgoV1(multipartFile, compressionQuality);
   }
 }
