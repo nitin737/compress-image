@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ValidatorService {
-  public void validateRequestParam(MultipartFile multipartFile, int quality) throws ICException {
+  public void validateRequestParam(MultipartFile multipartFile, float quality) throws ICException {
     if (multipartFile == null) {
       throw new ICException("Image file not attached.");
     }
