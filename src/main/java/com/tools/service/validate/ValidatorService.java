@@ -1,6 +1,6 @@
-package com.example.compressimage.service.validate;
+package com.tools.service.validate;
 
-import com.example.compressimage.exception.ICException;
+import com.tools.exception.ICException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

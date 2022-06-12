@@ -1,6 +1,6 @@
-package com.example.compressimage.service;
+package com.tools.service;
 
-import compression.algo.ImageCompressionAlgo;
+import com.tools.algo.ImageCompressionAlgo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

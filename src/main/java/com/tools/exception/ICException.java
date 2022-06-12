@@ -1,4 +1,4 @@
-package com.example.compressimage.exception;
+package com.tools.exception;
 
 import lombok.Getter;
 

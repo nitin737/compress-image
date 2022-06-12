@@ -1,4 +1,4 @@
-package com.example.compressimage.service;
+package com.tools.service;
 
 import org.springframework.web.multipart.MultipartFile;
 

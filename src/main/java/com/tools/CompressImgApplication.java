@@ -1,4 +1,4 @@
-package com.example.compressimage;
+package com.tools;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,6 +1,5 @@
-package com.example.compressimage.error;
+package com.tools.error;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +7,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-@AllArgsConstructor
 public class ICErrorEntity {
   private String userMessage;
   private int errorCode;

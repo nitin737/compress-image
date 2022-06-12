@@ -1,16 +1,13 @@
-package com.example.compressimage.controller;
+package com.tools.controller;
 
-import com.example.compressimage.exception.ICException;
-import com.example.compressimage.service.ImageService;
-import com.example.compressimage.service.validate.ValidatorService;
+import com.tools.service.ImageService;
+import com.tools.service.validate.ValidatorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @AllArgsConstructor
 @RestController

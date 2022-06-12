@@ -1,4 +1,4 @@
-package com.example.compressimage.model;
+package com.tools.model;
 
 import org.springframework.web.multipart.MultipartFile;
 
