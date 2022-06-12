@@ -18,7 +18,7 @@ import java.io.OutputStream;
 @Component
 public class ImageCompressionAlgo {
   public String compressAlgoV1(MultipartFile imageFile, float compressionQuality)
-      throws IOException, ICException {
+          throws ICException, IOException {
     OutputStream os = null;
     ImageOutputStream ios = null;
     ImageWriter writer = null;
@@ -42,7 +42,7 @@ public class ImageCompressionAlgo {
       compressAndWriteToDisk(compressionQuality, writer, oldImage);
     } catch (IOException e) {
       e.printStackTrace();
-      throw new IOException("Image Compression failed");
+      throw new ICException("Image Compression failed", e.getStackTrace().toString());
     } finally {
       os.close();
       ios.close();
