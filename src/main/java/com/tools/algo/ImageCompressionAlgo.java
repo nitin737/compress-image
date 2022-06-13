@@ -12,8 +12,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -21,61 +19,57 @@ import java.util.Arrays;
 @Component
 public class ImageCompressionAlgo {
 
-  public ImageResponse compressAlgoV1(MultipartFile imageFile, float cQuality)
-      throws ICException, IOException {
-    OutputStream os = null;
-    ImageWriter writer = null;
-    ByteArrayOutputStream baos = null;
-    ImageWriteParam param;
-    String compressedImageName = getNewFileName(imageFile);
-    try {
-      BufferedImage oldImage = ImageIO.read(imageFile.getInputStream());
-      File compressedImage = new File(compressedImageName);
-      os = new FileOutputStream(compressedImage);
+    public ImageResponse compressAlgoV1(MultipartFile imageFile, float cQuality)
+            throws ICException, IOException {
+        OutputStream os = null;
+        ImageWriter writer = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageWriteParam param;
+        String compressedImageName = getNewFileName(imageFile);
+        try {
+            BufferedImage oldImage = ImageIO.read(imageFile.getInputStream());
 
-      writer =
-          ImageIO.getImageWritersByFormatName(
-                  Files.getFileExtension(imageFile.getOriginalFilename()))
-              .next();
+            writer =
+                    ImageIO.getImageWritersByFormatName(
+                                    Files.getFileExtension(imageFile.getOriginalFilename()))
+                            .next();
 
-      baos = new ByteArrayOutputStream();
-      writer.setOutput(ImageIO.createImageOutputStream(baos));
+            writer.setOutput(ImageIO.createImageOutputStream(baos));
 
-      param = setImageWriteParam(cQuality, writer);
-      writer.write(null, new IIOImage(oldImage, null, null), param);
+            param = setImageWriteParam(cQuality, writer);
+            writer.write(null, new IIOImage(oldImage, null, null), param);
 
-    } catch (IOException e) {
-      e.printStackTrace();
-      throw new ICException("Image Compression failed", Arrays.toString(e.getStackTrace()));
-    } finally {
-      assert os != null;
-      assert writer != null;
-      assert baos != null;
-      os.close();
-      writer.dispose();
-      baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ICException("Image Compression failed", Arrays.toString(e.getStackTrace()));
+        } finally {
+            assert writer != null;
+            assert baos != null;
+
+            writer.dispose();
+            baos.close();
+        }
+
+        return ImageResponse.builder()
+                .bytes(baos.toByteArray())
+                .fileName(compressedImageName)
+                .imageSize(baos.toByteArray().length)
+                .build();
     }
 
-    return ImageResponse.builder()
-        .bytes(baos.toByteArray())
-        .fileName(compressedImageName)
-        .imageSize(baos.toByteArray().length)
-        .build();
-  }
-
-  private String getNewFileName(MultipartFile imageFile) {
-    return Files.getNameWithoutExtension(imageFile.getOriginalFilename())
-        + "-compressed."
-        + Files.getFileExtension(imageFile.getOriginalFilename());
-  }
-
-  private ImageWriteParam setImageWriteParam(float compressionQuality, ImageWriter writer)
-      throws IOException {
-    ImageWriteParam param = writer.getDefaultWriteParam();
-    if (param.canWriteCompressed()) {
-      param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-      param.setCompressionQuality(compressionQuality); // Change the quality value you prefer
+    private String getNewFileName(MultipartFile imageFile) {
+        return Files.getNameWithoutExtension(imageFile.getOriginalFilename())
+                + "-compressed."
+                + Files.getFileExtension(imageFile.getOriginalFilename());
     }
-    return param;
-  }
+
+    private ImageWriteParam setImageWriteParam(float compressionQuality, ImageWriter writer)
+            throws IOException {
+        ImageWriteParam param = writer.getDefaultWriteParam();
+        if (param.canWriteCompressed()) {
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(compressionQuality); // Change the quality value you prefer
+        }
+        return param;
+    }
 }
