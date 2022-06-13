@@ -16,13 +16,11 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.projectlombok:lombok'
+    implementation 'au.com.dius.pact.provider:junit5spring:4.3.9'
     annotationProcessor 'org.projectlombok:lombok'
     implementation "com.google.guava:guava:31.1-jre"
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.6.0'
 }
 
 tasks.verifyGoogleJavaFormat.ignoreFailures = true
@@ -30,4 +28,8 @@ tasks.verifyGoogleJavaFormat.ignoreFailures = true
 googleJavaFormat {
     toolVersion = '1.1'
     options style: 'AOSP'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

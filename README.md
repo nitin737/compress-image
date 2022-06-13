@@ -10,5 +10,7 @@ This project contains a rest endpoint which will compress the image size as desi
 - ./gradlew goJF
 - ./gradlew verGJF
 
+[How to configure goJF]("https://medium.com/@alexprut/integrate-google-java-style-guide-in-a-java-project-567abb6d7987)
+
 ---------
 
