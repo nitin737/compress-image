@@ -18,14 +18,11 @@ import java.io.OutputStream;
 @Component
 public class ImageCompressionAlgo {
   public String compressAlgoV1(MultipartFile imageFile, float compressionQuality)
-          throws ICException, IOException {
+      throws ICException, IOException {
     OutputStream os = null;
     ImageOutputStream ios = null;
     ImageWriter writer = null;
-    String compressedImageName =
-        extractFileName(imageFile.getOriginalFilename())
-            + "-compressed."
-            + extractFileExtenstion(imageFile.getOriginalFilename());
+    String compressedImageName = getNewFileName(imageFile);
     try {
       BufferedImage oldImage = ImageIO.read(imageFile.getInputStream());
       File compressedImage = new File(compressedImageName);
@@ -52,6 +49,12 @@ public class ImageCompressionAlgo {
     return compressedImageName;
   }
 
+  private String getNewFileName(MultipartFile imageFile) {
+    return extractFileName(imageFile.getOriginalFilename())
+        + "-compressed."
+        + extractFileExtenstion(imageFile.getOriginalFilename());
+  }
+
   private void compressAndWriteToDisk(
       float compressionQuality, ImageWriter writer, BufferedImage oldImage) throws IOException {
     ImageWriteParam param = writer.getDefaultWriteParam();
@@ -61,10 +64,6 @@ public class ImageCompressionAlgo {
       param.setCompressionQuality(compressionQuality);
     }
     writer.write(null, new IIOImage(oldImage, null, null), param);
-  }
-
-  private String generateCommpressedFileName(String filePrefix, String filePostfix) {
-    return filePrefix + "-compressed" + filePostfix;
   }
 
   private String extractFileExtenstion(String originalFilename) {
