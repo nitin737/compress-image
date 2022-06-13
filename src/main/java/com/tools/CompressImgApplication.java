@@ -6,11 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(
-        info =
-                @Info(
-                        title = "Image-Tools API",
-                        version = "2.0",
-                        description = "Image Manipulation"))
+    info = @Info(title = "Image-Tools API", version = "2.0", description = "Image Manipulation")
+)
 @SpringBootApplication
 public class CompressImgApplication {
 

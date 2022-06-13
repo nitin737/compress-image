@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ImageResponse {
-  private byte[] bytes;
-  private String fileName;
-  private double imageSize;
+    private byte[] bytes;
+    private String fileName;
+    private double imageSize;
 }

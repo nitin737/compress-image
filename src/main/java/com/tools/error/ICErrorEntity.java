@@ -8,6 +8,6 @@ import lombok.Setter;
 @Getter
 @Builder
 public class ICErrorEntity {
-  private String userMessage;
-  private int errorCode;
+    private String userMessage;
+    private int errorCode;
 }

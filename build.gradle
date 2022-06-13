@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.7.0'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'com.github.sherter.google-java-format' version '0.9'
 }
 
 group = 'com.example'
@@ -18,9 +19,15 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation "com.google.guava:guava:31.1-jre"
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.verifyGoogleJavaFormat.ignoreFailures = true
+
+googleJavaFormat {
+    toolVersion = '1.1'
+    options style: 'AOSP'
 }
