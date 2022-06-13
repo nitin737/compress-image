@@ -13,27 +13,27 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 @ControllerAdvice
 public class ImageExceptionHandler extends ResponseEntityExceptionHandler {
-  @ExceptionHandler(ICException.class)
-  public ResponseEntity<Object> handleImageException(ICException ex, WebRequest webRequest) {
-    ICErrorEntity error = null;
-    String errorCode = ex.getMessage();
-    String moreInfo = ex.getMoreInfo();
-    switch (errorCode) {
-      case ErrorCodes.UNKNOWN_EXCEPTION:
+    @ExceptionHandler(ICException.class)
+    public ResponseEntity<Object> handleImageException(ICException ex, WebRequest webRequest) {
+        ICErrorEntity error = null;
+        String errorCode = ex.getMessage();
+        String moreInfo = ex.getMoreInfo();
+        switch (errorCode) {
+            case ErrorCodes.UNKNOWN_EXCEPTION:
                 error =
-                    ICErrorEntity.builder()
-                        .errorCode(Integer.valueOf(HttpStatus.NOT_FOUND.value()))
-                        .userMessage(errorCode)
-                        .build();
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-      default:
-        error =
-            ICErrorEntity.builder()
-                .errorCode(Integer.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                .userMessage(moreInfo)
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+                        ICErrorEntity.builder()
+                                .errorCode(Integer.valueOf(HttpStatus.NOT_FOUND.value()))
+                                .userMessage(errorCode)
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+            default:
+                error =
+                        ICErrorEntity.builder()
+                                .errorCode(
+                                        Integer.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                                .userMessage(moreInfo)
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-  }
 }
-// case ErrorCodes.INTER:
