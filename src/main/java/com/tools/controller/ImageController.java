@@ -1,6 +1,7 @@
 package com.tools.controller;
 
 import com.tools.exception.ICException;
+import com.tools.model.ImageResponse;
 import com.tools.service.ImageService;
 import com.tools.service.validate.ValidatorService;
 import lombok.AllArgsConstructor;
@@ -32,17 +33,16 @@ public class ImageController {
   public ResponseEntity<Resource> compress(
       @RequestParam("image") MultipartFile image, @RequestParam("quality") float quality)
       throws ICException, IOException {
-    String compressedImageName = null;
-    validatorService.validateRequestParam(image, quality);
-    compressedImageName = imageCompressService.compressImage(image, quality);
 
-    byte[] bytes = convertFileToBytes(compressedImageName);
+    validatorService.validateRequestParam(image, quality);
+    ImageResponse imageResponse = imageCompressService.compressImage(image, quality);
 
     return ResponseEntity.ok()
         .header(
-            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + compressedImageName + "\"")
-        .contentType(MediaType.parseMediaType("application/octet-stream"))
-        .body(new ByteArrayResource(bytes));
+            HttpHeaders.CONTENT_DISPOSITION,
+            "attachment; filename=\"" + imageResponse.getFileName() + "\"")
+        .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+        .body(new ByteArrayResource(imageResponse.getBytes()));
   }
 
   private byte[] convertFileToBytes(String compressedImageName) throws IOException {

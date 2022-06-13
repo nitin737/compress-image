@@ -1,6 +1,8 @@
 package com.tools.algo;
 
+import com.google.common.io.Files;
 import com.tools.exception.ICException;
+import com.tools.model.ImageResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,20 +10,23 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 @Component
 public class ImageCompressionAlgo {
-  public String compressAlgoV1(MultipartFile imageFile, float compressionQuality)
+
+  public ImageResponse compressAlgoV1(MultipartFile imageFile, float cQuality)
       throws ICException, IOException {
     OutputStream os = null;
-    ImageOutputStream ios = null;
     ImageWriter writer = null;
+    ByteArrayOutputStream baos = null;
+    ImageWriteParam param;
     String compressedImageName = getNewFileName(imageFile);
     try {
       BufferedImage oldImage = ImageIO.read(imageFile.getInputStream());
@@ -30,47 +35,47 @@ public class ImageCompressionAlgo {
 
       writer =
           ImageIO.getImageWritersByFormatName(
-                  extractFileExtenstion(imageFile.getOriginalFilename()))
+                  Files.getFileExtension(imageFile.getOriginalFilename()))
               .next();
 
-      ios = ImageIO.createImageOutputStream(os);
-      writer.setOutput(ios);
+      baos = new ByteArrayOutputStream();
+      writer.setOutput(ImageIO.createImageOutputStream(baos));
 
-      compressAndWriteToDisk(compressionQuality, writer, oldImage);
+      param = setImageWriteParam(cQuality, writer);
+      writer.write(null, new IIOImage(oldImage, null, null), param);
+
     } catch (IOException e) {
       e.printStackTrace();
-      throw new ICException("Image Compression failed", e.getStackTrace().toString());
+      throw new ICException("Image Compression failed", Arrays.toString(e.getStackTrace()));
     } finally {
+      assert os != null;
+      assert writer != null;
+      assert baos != null;
       os.close();
-      ios.close();
       writer.dispose();
+      baos.close();
     }
 
-    return compressedImageName;
+    return ImageResponse.builder()
+        .bytes(baos.toByteArray())
+        .fileName(compressedImageName)
+        .imageSize(baos.toByteArray().length)
+        .build();
   }
 
   private String getNewFileName(MultipartFile imageFile) {
-    return extractFileName(imageFile.getOriginalFilename())
+    return Files.getNameWithoutExtension(imageFile.getOriginalFilename())
         + "-compressed."
-        + extractFileExtenstion(imageFile.getOriginalFilename());
+        + Files.getFileExtension(imageFile.getOriginalFilename());
   }
 
-  private void compressAndWriteToDisk(
-      float compressionQuality, ImageWriter writer, BufferedImage oldImage) throws IOException {
+  private ImageWriteParam setImageWriteParam(float compressionQuality, ImageWriter writer)
+      throws IOException {
     ImageWriteParam param = writer.getDefaultWriteParam();
     if (param.canWriteCompressed()) {
       param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-      // Change the quality value you prefer
-      param.setCompressionQuality(compressionQuality);
+      param.setCompressionQuality(compressionQuality); // Change the quality value you prefer
     }
-    writer.write(null, new IIOImage(oldImage, null, null), param);
-  }
-
-  private String extractFileExtenstion(String originalFilename) {
-    return originalFilename.substring(originalFilename.indexOf(".") + 1);
-  }
-
-  private String extractFileName(String originalFilename) {
-    return originalFilename.substring(0, originalFilename.indexOf("."));
+    return param;
   }
 }
