@@ -1,36 +1,37 @@
 package com.tools.algo;
 
-import com.google.common.io.Files;
 import com.tools.exception.ICException;
 import com.tools.model.ImageResponse;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Arrays;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
+import static com.google.common.io.Files.getFileExtension;
+import static com.google.common.io.Files.getNameWithoutExtension;
 
 @Component
 public class ImageCompressionAlgo {
 
     public ImageResponse compressAlgoV1(MultipartFile imageFile, float cQuality)
             throws ICException, IOException {
-        OutputStream os = null;
         ImageWriter writer = null;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageWriteParam param;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         String compressedImageName = getNewFileName(imageFile);
         try {
             BufferedImage oldImage = ImageIO.read(imageFile.getInputStream());
 
             writer =
                     ImageIO.getImageWritersByFormatName(
-                                    Files.getFileExtension(imageFile.getOriginalFilename()))
+                                    getFileExtension(imageFile.getOriginalFilename()))
                             .next();
 
             writer.setOutput(ImageIO.createImageOutputStream(baos));
@@ -57,9 +58,9 @@ public class ImageCompressionAlgo {
     }
 
     private String getNewFileName(MultipartFile imageFile) {
-        return Files.getNameWithoutExtension(imageFile.getOriginalFilename())
+        return getNameWithoutExtension(imageFile.getOriginalFilename())
                 + "-compressed."
-                + Files.getFileExtension(imageFile.getOriginalFilename());
+                + getFileExtension(imageFile.getOriginalFilename());
     }
 
     private ImageWriteParam setImageWriteParam(float compressionQuality, ImageWriter writer)
