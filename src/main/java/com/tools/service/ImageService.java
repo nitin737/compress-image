@@ -10,5 +10,5 @@ public interface ImageService {
     ImageResponse compressImage(MultipartFile multipartFile, float CompressionQuality)
             throws IOException, ICException;
 
-    ImageResponse convertImageFormat(MultipartFile image, String format);
+    ImageResponse convertImageFormat(MultipartFile image, String format) throws ICException, IOException;
 }

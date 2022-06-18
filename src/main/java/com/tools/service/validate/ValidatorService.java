@@ -5,6 +5,7 @@ import com.tools.exception.ICException;
 import com.tools.imagetype.Image;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import static com.google.common.io.Files.getFileExtension;
 
 @Service
 public class ValidatorService {
@@ -25,8 +26,12 @@ public class ValidatorService {
     public void validateImageAndFormatRequestParam(MultipartFile image, String format)
             throws ICException {
         validateMultipartFile(image);
-        if (Image.contains(format)) {
+        if (!Image.contains(format)) {
             throw new ICException(ErrorCodes.IMAGE_CONVERSION_FORMAT_IS_NOT_SUPPORTED);
+        }
+        if (getFileExtension(image.getOriginalFilename()).equals(format)) {
+            throw new ICException(
+                    ErrorCodes.OLD_FILE_EXTENSTION_AND_NEW_FILE_EXTENSION_CANNOT_SAME);
         }
     }
 }

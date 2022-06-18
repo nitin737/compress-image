@@ -10,14 +10,18 @@ import java.util.Arrays;
 @UtilityClass
 public class ImageFileUtils {
 
-  public String extractFileExtn(String fileName) {
-    String extn = "";
-    if (fileName.contains(".")) {
-      extn = Arrays.stream(fileName.split("\\.")).reduce((a, b) -> b).orElse(null);
+    public String extractFileExtn(String fileName) {
+        String extn = "";
+        if (fileName.contains(".")) {
+            extn = Arrays.stream(fileName.split("\\.")).reduce((a, b) -> b).orElse(null);
+        }
+        return extn;
     }
-    return extn;
-  }
 
-
-
+    public String createNewFileName(String inputFileName, String format) {
+        for (Image value : Image.values()) {
+            inputFileName = inputFileName.replace(value.toString(), format);
+        }
+        return inputFileName;
+    }
 }

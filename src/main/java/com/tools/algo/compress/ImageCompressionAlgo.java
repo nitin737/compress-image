@@ -1,5 +1,6 @@
-package com.tools.algo;
+package com.tools.algo.compress;
 
+import com.tools.error.ErrorCodes;
 import com.tools.exception.ICException;
 import com.tools.model.ImageResponse;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,6 @@ import javax.imageio.ImageWriter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static com.google.common.io.Files.getFileExtension;
 import static com.google.common.io.Files.getNameWithoutExtension;
@@ -41,7 +41,7 @@ public class ImageCompressionAlgo {
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw new ICException("Image Compression failed", Arrays.toString(e.getStackTrace()));
+            throw new ICException(ErrorCodes.FAILED_TO_COMPRESS_IMAGE);
         } finally {
             assert writer != null;
             assert baos != null;
