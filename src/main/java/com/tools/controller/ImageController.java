@@ -26,15 +26,35 @@ public class ImageController {
     private ValidatorService validatorService;
 
     @PostMapping(
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
-        produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
-    )
+            value = "/compress",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> compress(
             @RequestParam("image") MultipartFile image, @RequestParam("quality") float quality)
             throws ICException, IOException {
 
-        validatorService.validateRequestParam(image, quality);
+        validatorService.validateImageAndQualityRequestParam(image, quality);
         ImageResponse imageResponse = imageCompressService.compressImage(image, quality);
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + imageResponse.getFileName() + "\"")
+                .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .body(new ByteArrayResource(imageResponse.getBytes()));
+    }
+
+    @PostMapping(
+            value = "/convert",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> convertFormat(
+            @RequestParam(value = "image") MultipartFile image,
+            @RequestParam(value = "format") String format)
+            throws ICException, IOException {
+
+        validatorService.validateImageAndFormatRequestParam(image, format);
+        ImageResponse imageResponse = imageCompressService.convertImageFormat(image, format);
 
         return ResponseEntity.ok()
                 .header(
